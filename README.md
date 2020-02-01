@@ -1,2 +1,2 @@
 # HamlibJNI
-Proof of concept of Java interface to Hamlib library functions
+Testbed for Hamlib SWIG-generated Java interface to Hamlib.
