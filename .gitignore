@@ -1,9 +1,10 @@
 /bin/
 /src/hamlib/*.java
 /jni/*.c
+/jni/*.o
 /jni/*.so
 /jni/*.dylib
-/jni/*dll
+/jni/*.dll
 .classpath
 .project
 

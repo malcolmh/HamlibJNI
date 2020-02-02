@@ -9,10 +9,16 @@ public class Test {
     static { System.loadLibrary("hamlib_wrap"); }
 
     public static void main(String args[]) throws Exception {
-        
+
+    	hamlib.Rig rig;
         Hamlib.rig_set_debug(rig_debug_level_e.RIG_DEBUG_NONE);
-        hamlib.Rig rig = new hamlib.Rig(Integer.parseUnsignedInt(args[0]));
-        rig.getState().getRigport().setPathname(args[1]);
+        System.out.println("Starting rig ...");
+    	if (args.length >= 2) {
+            rig = new hamlib.Rig(Integer.parseUnsignedInt(args[0]));
+            rig.getState().getRigport().setPathname(args[1]);
+    	} else {
+    		rig = new hamlib.Rig(1);
+    	}
         rig.open();
         System.out.println("Rig started");
         Thread.sleep(3000);
