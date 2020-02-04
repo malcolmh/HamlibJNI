@@ -22,7 +22,7 @@ public class Test {
         rig.open();
         System.out.println("Rig started");
         Thread.sleep(3000);
-        double freq = rig.get_freq(hamlib.HamlibConstants.RIG_VFO_MAIN);
+        double freq = rig.get_freq(hamlib.HamlibConstants.RIG_VFO_CURR);
         System.out.println(freq);
         Thread.sleep(3000);
         rig.set_freq(hamlib.HamlibConstants.RIG_VFO_MAIN, freq + 1.0e6);
