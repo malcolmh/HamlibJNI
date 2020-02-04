@@ -55,8 +55,9 @@ public class Commands {
             int err = 0;
             switch (cmd) {
             case FREQ_G:
+                int freq = (int)rig.get_freq(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-                else System.out.println("Frequency: " + (int)rig.get_freq(hamlib.HamlibConstants.RIG_VFO_CURR) + " Hz");
+                else System.out.println("Frequency: " + freq + " Hz");
                 break;
             case FREQ_S:
                 rig.set_freq(hamlib.HamlibConstants.RIG_VFO_CURR, Double.parseDouble(args[0]));
