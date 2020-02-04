@@ -1,4 +1,4 @@
-/bin/
+*.class
 /src/hamlib/*.java
 /jni/*.c
 /jni/*.o
@@ -7,4 +7,3 @@
 /jni/*.dll
 .classpath
 .project
-
