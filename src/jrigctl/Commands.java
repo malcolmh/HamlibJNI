@@ -18,18 +18,21 @@ public class Commands {
         }
     }
     
-    public enum Cmd {
+    enum Cmd {
         FREQ_S, FREQ_G, MODE_S, MODE_G, VFO_S, VFO_G
     }
     
-    private static final EnumMap<Cmd, CmdPar> CmdMap = new EnumMap<>(Cmd.class);
+    static final EnumMap<Cmd, CmdPar> CmdMap = new EnumMap<>(Cmd.class);
     static {
-        CmdMap.put(Cmd.FREQ_S, new CmdPar("F", "\\set_freq", 1, new String[]{"Frequency (Hz)"})); CmdMap.put(Cmd.FREQ_G, new CmdPar("f", "\\get_freq", 0, null));
-        CmdMap.put(Cmd.MODE_S, new CmdPar("M", "\\set_mode", 2, new String[]{"Mode", "Passband (Hz)"})); CmdMap.put(Cmd.MODE_G, new CmdPar("m", "\\get_mode", 0, null));
-        CmdMap.put(Cmd.VFO_S, new CmdPar("V", "\\set_vfo", 1, new String[]{"VFO"})); CmdMap.put(Cmd.VFO_G, new CmdPar("v", "\\get_vfo", 0, null));
+        CmdMap.put(Cmd.FREQ_S, new CmdPar("F", "\\set_freq", 1, new String[]{"Frequency (Hz)"}));
+        CmdMap.put(Cmd.FREQ_G, new CmdPar("f", "\\get_freq", 0, null));
+        CmdMap.put(Cmd.MODE_S, new CmdPar("M", "\\set_mode", 2, new String[]{"Mode", "Passband (Hz)"}));
+        CmdMap.put(Cmd.MODE_G, new CmdPar("m", "\\get_mode", 0, null));
+        CmdMap.put(Cmd.VFO_S, new CmdPar("V", "\\set_vfo", 1, new String[]{"VFO"}));
+        CmdMap.put(Cmd.VFO_G, new CmdPar("v", "\\get_vfo", 0, null));
     }
 
-    public static Cmd getCmd(String cmd) {
+    static Cmd getCmd(String cmd) {
         for (Entry<Cmd, CmdPar> ent : CmdMap.entrySet()) {
             if (ent.getValue().chr.equals(cmd) || ent.getValue().str.equals(cmd)) {
                 return ent.getKey();

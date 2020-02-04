@@ -1,7 +1,8 @@
 package jrigctl;
 
-import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.GetOpt;
 import java.util.Scanner;
+
+import gnu.getopt.Getopt;
 
 import hamlib.Hamlib;
 import hamlib.powerstat_t;
@@ -22,37 +23,37 @@ public class Jrigctl {
         String dcdT = "";
         int baud = 0;
         String civ = "";
-        
-        GetOpt g = new GetOpt(args, "m:r:p:d:P:D:s:c:v");
+      
+        Getopt g = new Getopt("jrigctl", args, "m:r:p:d:P:D:s:c:v");
         int c;
-        while ((c = g.getNextOption()) != -1) {
+        while ((c = g.getopt()) != -1) {
             switch(c) {
             case 'm':
-                model = Integer.parseUnsignedInt(g.getOptionArg());
+                model = Integer.parseUnsignedInt(g.getOptarg());
                 break;
             case 'r':
-                port = g.getOptionArg();
+                port = g.getOptarg();
                 break;
             case 'v':
                 debug++;
                 break;
             case 'p':
-                ptt = g.getOptionArg();
+                ptt = g.getOptarg();
                 break;
             case 'd':
-                dcd = g.getOptionArg();
+                dcd = g.getOptarg();
                 break;
             case 'P':
-                pttT = g.getOptionArg();
+                pttT = g.getOptarg();
                 break;
             case 'D':
-                dcd = g.getOptionArg();
+                dcd = g.getOptarg();
                 break;
             case 's':
-                baud = Integer.parseUnsignedInt(g.getOptionArg());
+                baud = Integer.parseUnsignedInt(g.getOptarg());
                 break;
             case 'c':
-                civ = g.getOptionArg();
+                civ = g.getOptarg();
                 break;
             default:
                 System.out.print("Invalid option\n");
