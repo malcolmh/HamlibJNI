@@ -7,3 +7,4 @@
 /jni/*.dll
 .classpath
 .project
+/src/gnu/getopt
