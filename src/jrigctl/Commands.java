@@ -20,8 +20,11 @@ public class Commands {
     }
     
     enum Cmd {
-        FRQ_S, FRQ_G, MOD_S, MOD_G, VFO_S, VFO_G, PWR_S, PWR_G, PTT_S, PTT_G, DCD_G, RSH_S, RSH_G,
-        ROF_S, ROF_G, SPF_G, SPF_S, SPV_S, SPV_G, SPM_S, SPM_G
+        FRQ_S, FRQ_G, MOD_S, MOD_G, VFO_S, VFO_G, PWR_S, PWR_G, PTT_S, PTT_G, RSH_S, RSH_G, ROF_S, ROF_G,
+        SPF_G, SPF_S, SPV_S, SPV_G, SPM_S, SPM_G, RIT_S, RIT_G, XIT_S, XIT_G, TNS_S, TNS_G, DCC_S, DCC_G,
+        CTC_S, CTC_G, DCS_S, DCS_G, CTS_S, CTS_G, ANT_S, ANT_G, LVL_S, LVL_G, FNC_S, FNC_G, PRM_S, PRM_G, 
+        XLV_S, XLV_G, XPR_S, XPR_G, CNF_S, CNF_G, DTM_S, DTM_G, TRN_S, TRN_G, CHN_S, CHN_G,
+        DCD_G, RST_S, MRS_S, BNK_S, VOP_S, SCN_S, DEV_G
     }
     
     static final EnumMap<Cmd, CmdPar> CmdMap = new EnumMap<>(Cmd.class);
@@ -115,11 +118,6 @@ public class Commands {
                 rig.set_ptt(hamlib.HamlibConstants.RIG_VFO_CURR, hamlib.ptt_t.swigToEnum(Integer.parseInt(args[0])));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
-            case DCD_G:
-//                hamlib.dcd_t dcd = rig.get_dcd();
-//                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-//                else System.out.println(ptt.toString());
-                break;
             case RSH_G:
                 rptr_shift_t fsh = rig.get_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
@@ -137,6 +135,58 @@ public class Commands {
             case ROF_S:
                 rig.set_rptr_offs(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
+            case SPF_G:
+            case SPF_S:
+            case SPV_S:
+            case SPV_G:
+            case SPM_S:
+            case SPM_G:
+            case RIT_S:
+            case RIT_G:
+            case XIT_S:
+            case XIT_G:
+            case TNS_S:
+            case TNS_G:
+            case DCC_S:
+            case DCC_G:
+            case CTC_S:
+            case CTC_G:
+            case DCS_S:
+            case DCS_G:
+            case CTS_S:
+            case CTS_G:
+            case ANT_S:
+            case ANT_G:
+            case LVL_S:
+            case LVL_G:
+            case FNC_S:
+            case FNC_G:
+            case PRM_S:
+            case PRM_G:
+            case XLV_S:
+            case XLV_G:
+            case XPR_S:
+            case XPR_G:
+            case CNF_S:
+            case CNF_G:
+            case DTM_S:
+            case DTM_G:
+            case TRN_S:
+            case TRN_G:
+            case CHN_S:
+            case CHN_G:
+            case DCD_G:
+//              hamlib.dcd_t dcd = rig.get_dcd();
+//              if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+//              else System.out.println(ptt.toString());
+              break;
+            case RST_S:
+            case MRS_S:
+            case BNK_S:
+            case VOP_S:
+            case SCN_S:
+            case DEV_G:
                 break;
             default:
                 break;
