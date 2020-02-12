@@ -7,4 +7,6 @@
 /jni/*.dll
 .classpath
 .project
-/src/gnu/getopt
+/src/gnu/getopt/*
+!/src/gnu/.placeholder
+/bin/*

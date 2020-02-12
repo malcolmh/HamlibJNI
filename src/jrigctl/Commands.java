@@ -21,9 +21,9 @@ public class Commands {
     
     enum Cmd {
         FRQ_S, FRQ_G, MOD_S, MOD_G, VFO_S, VFO_G, PWR_S, PWR_G, PTT_S, PTT_G, RSH_S, RSH_G, ROF_S, ROF_G,
-        SPF_G, SPF_S, SPV_S, SPV_G, SPM_S, SPM_G, RIT_S, RIT_G, XIT_S, XIT_G, TNS_S, TNS_G, DCC_S, DCC_G,
-        CTC_S, CTC_G, DCS_S, DCS_G, CTS_S, CTS_G, ANT_S, ANT_G, LVL_S, LVL_G, FNC_S, FNC_G, PRM_S, PRM_G, 
-        XLV_S, XLV_G, XPR_S, XPR_G, CNF_S, CNF_G, DTM_S, DTM_G, TRN_S, TRN_G, CHN_S, CHN_G,
+        SPF_G, SPF_S, SFM_S, SFM_G, SPV_S, SPV_G, SPM_S, SPM_G, RIT_S, RIT_G, XIT_S, XIT_G, TNS_S, TNS_G,
+        DCC_S, DCC_G, CTC_S, CTC_G, DCS_S, DCS_G, CTS_S, CTS_G, ANT_S, ANT_G, LVL_S, LVL_G, FNC_S, FNC_G,
+        PRM_S, PRM_G, XLV_S, XLV_G, XPR_S, XPR_G, CNF_S, CNF_G, DTM_S, DTM_G, TRN_S, TRN_G, CHN_S, CHN_G,
         DCD_G, RST_S, MRS_S, BNK_S, VOP_S, SCN_S, DEV_G
     }
     
@@ -44,6 +44,30 @@ public class Commands {
         CmdMap.put(Cmd.RSH_G, new CmdPar("r", "\\get_rptr_shift", 0, null));
         CmdMap.put(Cmd.ROF_S, new CmdPar("O", "\\set_rptr_offs", 1, new String[]{"Rptr Offset"}));
         CmdMap.put(Cmd.ROF_G, new CmdPar("o", "\\get_rptr_offs", 0, null));
+        CmdMap.put(Cmd.SPF_S, new CmdPar("I", "\\set_split_freq", 1, new String[]{"Tx Frequency (Hz)"}));
+        CmdMap.put(Cmd.SPF_G, new CmdPar("i", "\\get_split_freq", 0, null));
+        CmdMap.put(Cmd.SPM_S, new CmdPar("X", "\\set_split_mode", 2, new String[]{"Tx Mode", "Tx Passband"}));
+        CmdMap.put(Cmd.SPM_G, new CmdPar("x", "\\get_split_mode", 0, null));
+        CmdMap.put(Cmd.SPM_S, new CmdPar("K", "\\set_split_frequency_mode", 3, new String[]{"Tx Frequency", "Tx Mode", "Tx Passband"}));
+        CmdMap.put(Cmd.SPM_G, new CmdPar("k", "\\get_split_frequency_mode", 0, null));
+        CmdMap.put(Cmd.SPV_S, new CmdPar("S", "\\set_split_vfo", 2, new String[]{"Split", "Tx VFO"}));
+        CmdMap.put(Cmd.SPV_G, new CmdPar("s", "\\get_split_vfo", 0, null));
+        CmdMap.put(Cmd.RIT_S, new CmdPar("J", "\\set_rit", 1, new String[]{"RIT"}));
+        CmdMap.put(Cmd.RIT_G, new CmdPar("j", "\\get_rit", 0, null));
+        CmdMap.put(Cmd.XIT_S, new CmdPar("Z", "\\set_xit", 1, new String[]{"XIT"}));
+        CmdMap.put(Cmd.XIT_G, new CmdPar("z", "\\get_xit", 0, null));
+        CmdMap.put(Cmd.TNS_S, new CmdPar("N", "\\set_ts", 1, new String[]{"Tuning Step"}));
+        CmdMap.put(Cmd.TNS_G, new CmdPar("n", "\\get_ts", 0, null));
+        CmdMap.put(Cmd.DCC_S, new CmdPar("D", "\\set_dcs_code", 1, new String[]{"DCS Code"}));
+        CmdMap.put(Cmd.DCC_G, new CmdPar("d", "\\get_dcs_code", 0, null));
+        CmdMap.put(Cmd.CTC_S, new CmdPar("C", "\\set_ctcss_tone", 1, new String[]{"CTCSS Tone"}));
+        CmdMap.put(Cmd.CTC_G, new CmdPar("c", "\\get_ctcss_tone", 0, null));
+        char[] dcss = {0x92}; char[] dcsg = {0x93};
+        CmdMap.put(Cmd.DCS_S, new CmdPar(String.valueOf(dcss), "\\set_dcs_sql", 1, new String[]{"DCS Code"}));
+        CmdMap.put(Cmd.DCS_G, new CmdPar(String.valueOf(dcsg), "\\get_dcs_sql", 0, null));
+        char[] ctcss = {0x90}; char[] ctcsg = {0x91};
+        CmdMap.put(Cmd.CTS_S, new CmdPar(String.valueOf(ctcss), "\\set_ctcss_sql", 1, new String[]{"CTCSS Tone"}));
+        CmdMap.put(Cmd.CTS_G, new CmdPar(String.valueOf(ctcsg), "\\get_ctcss_sql", 0, null));
     }
 
     static Cmd getCmd(String cmd) {
@@ -71,13 +95,17 @@ public class Commands {
             }
             int err = 0;
             switch (cmd) {
+            case FRQ_S:
+                rig.set_freq(hamlib.HamlibConstants.RIG_VFO_CURR, Double.parseDouble(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case FRQ_G:
                 double freq = rig.get_freq(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 else System.out.println("Frequency: " + (int)freq + " Hz");
                 break;
-            case FRQ_S:
-                rig.set_freq(hamlib.HamlibConstants.RIG_VFO_CURR, Double.parseDouble(args[0]));
+            case MOD_S:
+                rig.set_mode(Hamlib.rig_parse_mode(args[0]), new Integer(Integer.parseInt(args[1])), hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case MOD_G:
@@ -87,8 +115,8 @@ public class Commands {
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 else System.out.println("Mode: " + Hamlib.rig_strrmode(mode[0]) + "\nPassband: " + bw[0] + (bw[0] > 0 ? " Hz" : ""));
                 break;
-            case MOD_S:
-                rig.set_mode(Hamlib.rig_parse_mode(args[0]), new Integer(Integer.parseInt(args[1])), hamlib.HamlibConstants.RIG_VFO_CURR);
+            case VFO_S:
+                rig.set_vfo(Hamlib.rig_parse_vfo(args[0]));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case VFO_G:
@@ -96,35 +124,31 @@ public class Commands {
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 else System.out.println("VFO: " + Hamlib.rig_strvfo(vfo));
                 break;
-            case VFO_S:
-                rig.set_vfo(Hamlib.rig_parse_vfo(args[0]));
-                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-                break;
-            case PWR_G:
-                hamlib.powerstat_t pwr = rig.get_powerstat();
-                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-                else System.out.println(pwr.toString());
-                break;
-            case PWR_S:
-                rig.set_powerstat(hamlib.powerstat_t.swigToEnum(Integer.parseInt(args[0])));
+            case PTT_S:
+                rig.set_ptt(hamlib.HamlibConstants.RIG_VFO_CURR, hamlib.ptt_t.swigToEnum(Integer.parseInt(args[0])));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case PTT_G:
                 hamlib.ptt_t ptt = rig.get_ptt(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-                else System.out.println(ptt.toString());
+                else System.out.println("PTT: " + ptt.swigValue());
                 break;
-            case PTT_S:
-                rig.set_ptt(hamlib.HamlibConstants.RIG_VFO_CURR, hamlib.ptt_t.swigToEnum(Integer.parseInt(args[0])));
+            case DCD_G:
+                hamlib.dcd_t dcd = rig.get_dcd(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("DCD: " + dcd.swigValue());
+                break;
+            case RSH_S:
+                rig.set_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR, Hamlib.rig_parse_rptr_shift(args[0]));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case RSH_G:
                 rptr_shift_t fsh = rig.get_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-                else System.out.println(Hamlib.rig_strptrshift(fsh));
+                else System.out.println("Rptr Shift: " + Hamlib.rig_strptrshift(fsh));
                 break;
-            case RSH_S:
-                rig.set_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR, Hamlib.rig_parse_rptr_shift(args[0]));
+            case ROF_S:
+                rig.set_rptr_offs(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case ROF_G:
@@ -132,32 +156,117 @@ public class Commands {
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 else System.out.println("Rptr Offset: " + off + " Hz");
                 break;
-            case ROF_S:
-                rig.set_rptr_offs(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+            case SPF_S:
+                rig.set_split_freq(hamlib.HamlibConstants.RIG_VFO_CURR, Double.parseDouble(args[0]));
                 if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
                 break;
             case SPF_G:
-            case SPF_S:
-            case SPV_S:
-            case SPV_G:
+                freq = rig.get_split_freq(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("Tx Frequency: " + (int)freq + " Hz");
+                break;
             case SPM_S:
+                rig.set_split_mode(Hamlib.rig_parse_mode(args[0]), Integer.parseInt(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case SPM_G:
+                mode = new java.math.BigInteger[1];
+                bw = new int[1];
+                rig.get_split_mode(mode, bw, hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("Mode: " + Hamlib.rig_strrmode(mode[0]) + "\nPassband: " + bw[0] + (bw[0] > 0 ? " Hz" : ""));
+                break;
+            case SFM_S:
+//                rig.set_split_freq_mode();
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
+            case SFM_G:
+                break;
+            case SPV_S:
+                rig.set_split_vfo(hamlib.split_t.swigToEnum(Integer.parseInt(args[0])), Hamlib.rig_parse_vfo(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
+            case SPV_G:
+                hamlib.SWIGTYPE_p_split_t[] split = new hamlib.SWIGTYPE_p_split_t[1];
+                hamlib.SWIGTYPE_p_unsigned_int[] tx_vfo = new hamlib.SWIGTYPE_p_unsigned_int[1];
+                rig.get_split_vfo(split[0], tx_vfo[0], hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("Split: " + split[0].toString() + "\nTx VFO: " + tx_vfo[0].toString());
+                break;
             case RIT_S:
+                rig.set_rit(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case RIT_G:
+                int rit = rig.get_rit(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("RIT: " + rit + " Hz");
+                break;
             case XIT_S:
+                rig.set_xit(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case XIT_G:
+                int xit = rig.get_xit(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("XIT: " + xit + " Hz");
+                break;
             case TNS_S:
+                rig.set_ts(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case TNS_G:
+                int ts = rig.get_ts(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("Tuning Step: " + ts + " Hz");
+                break;
             case DCC_S:
+                rig.set_dcs_code(hamlib.HamlibConstants.RIG_VFO_CURR, Long.parseLong(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case DCC_G:
+               long dcs = rig.get_dcs_code(hamlib.HamlibConstants.RIG_VFO_CURR);
+               if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+               else System.out.println("DCS Code: " + dcs);
+               break;
             case CTC_S:
+                rig.set_ctcss_tone(hamlib.HamlibConstants.RIG_VFO_CURR, Long.parseLong(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case CTC_G:
+                long ctcss = rig.get_ctcss_tone(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("CTCSS Tone: " + ctcss + " Hz");
+                break;
             case DCS_S:
+                rig.set_dcs_sql(hamlib.HamlibConstants.RIG_VFO_CURR, Long.parseLong(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case DCS_G:
+                dcs = rig.get_dcs_sql(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("DCS Code: " + dcs);
+                break;
             case CTS_S:
+                rig.set_ctcss_sql(hamlib.HamlibConstants.RIG_VFO_CURR, Long.parseLong(args[0]));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case CTS_G:
+                ctcss = rig.get_ctcss_sql(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("CTCSS Tone: " + ctcss + " Hz");
+                break;
             case ANT_S:
             case ANT_G:
+            case PWR_G:
+                hamlib.powerstat_t pwr = rig.get_powerstat();
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                else System.out.println("Power Status: " + pwr.swigValue());
+                break;
+            case PWR_S:
+                rig.set_powerstat(hamlib.powerstat_t.swigToEnum(Integer.parseInt(args[0])));
+                if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
+                break;
             case LVL_S:
             case LVL_G:
             case FNC_S:
@@ -176,11 +285,6 @@ public class Commands {
             case TRN_G:
             case CHN_S:
             case CHN_G:
-            case DCD_G:
-//              hamlib.dcd_t dcd = rig.get_dcd();
-//              if ((err = rig.getError_status()) != 0) System.out.println(Hamlib.rigerror(err));
-//              else System.out.println(ptt.toString());
-              break;
             case RST_S:
             case MRS_S:
             case BNK_S:
