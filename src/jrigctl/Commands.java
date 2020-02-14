@@ -23,8 +23,7 @@ public class Commands {
         FRQ_S, FRQ_G, MOD_S, MOD_G, VFO_S, VFO_G, PTT_S, PTT_G, RSH_S, RSH_G, ROF_S, ROF_G, SPF_G, SPF_S,
         SPM_S, SPM_G, SFM_S, SFM_G, SPV_S, SPV_G, RIT_S, RIT_G, XIT_S, XIT_G, TNS_S, TNS_G, DCC_S, DCC_G,
         CTT_S, CTT_G, DCS_S, DCS_G, CTS_S, CTS_G, PWR_S, PWR_G, ANT_S, ANT_G, LVL_S, LVL_G, FNC_S, FNC_G,
-        PRM_S, PRM_G, XLV_S, XLV_G, XFN_S, XFN_G, XPM_S, XPM_G, CNF_S, CNF_G, DTM_S, DTM_G, MEM_S, MEM_G,
-        TRN_S, TRN_G, CHN_S, CHN_G, DCD_G, RST_S, MRS_S, BNK_S, VOP_S, SCN_S, DEV_G
+        PRM_S, PRM_G, DTM_S, DTM_G, MEM_S, MEM_G, TRN_S, TRN_G, DCD_G, RST_S, MRS_S, BNK_S, VOP_S, SCN_S
     }
     
     static final EnumMap<Cmd, CmdPar> CmdMap = new EnumMap<>(Cmd.class);
@@ -84,8 +83,6 @@ public class Commands {
         CmdMap.put(Cmd.SCN_S, new CmdPar("g", "\\scan", 2, new String[]{"Scan", "Channel"}));
         CmdMap.put(Cmd.TRN_S, new CmdPar("A", "\\set_trn", 1, new String[]{"Tranceive"}));
         CmdMap.put(Cmd.TRN_G, new CmdPar("a", "\\get_trn", 0, null));
-        CmdMap.put(Cmd.CHN_S, new CmdPar("H", "\\set_channel", 1, new String[]{"Channel"}));
-        CmdMap.put(Cmd.CHN_G, new CmdPar("h", "\\get_channel", 0, null));
     }
 
     static Cmd getCmd(String cmd) {
@@ -121,7 +118,7 @@ public class Commands {
                 if (rig.getError_status() == 0) System.out.println("Frequency: " + (int)freq + " Hz");
                 break;
             case MOD_S:
-                rig.set_mode(Hamlib.rig_parse_mode(args[0]), new Integer(Integer.parseInt(args[1])), hamlib.HamlibConstants.RIG_VFO_CURR);
+                rig.set_mode(Hamlib.rig_parse_mode(args[0]), Integer.parseInt(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
                 break;
             case MOD_G:
                 java.math.BigInteger[] mode = new java.math.BigInteger[1];
@@ -240,16 +237,19 @@ public class Commands {
                 ctcss = rig.get_ctcss_sql(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if (rig.getError_status() == 0) System.out.println("CTCSS Tone: " + ctcss + " Hz");
                 break;
-            case ANT_S:
-                break;
-            case ANT_G:
-                break;
             case PWR_S:
                 rig.set_powerstat(hamlib.powerstat_t.swigToEnum(Integer.parseInt(args[0])));
                 break;
             case PWR_G:
                 hamlib.powerstat_t pwr = rig.get_powerstat();
                 if (rig.getError_status() == 0) System.out.println("Power Status: " + pwr.swigValue());
+                break;
+            case RST_S:
+                rig.reset(hamlib.reset_t.swigToEnum(Integer.parseInt(args[0])));
+                break;
+            case ANT_S:
+                break;
+            case ANT_G:
                 break;
             case LVL_S:
                 rig.set_level(Hamlib.rig_parse_level(args[0]), Float.parseFloat(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
@@ -272,41 +272,39 @@ public class Commands {
                 int parm = rig.get_parm_i(Hamlib.rig_parse_parm(args[0]));
                 if (rig.getError_status() == 0) System.out.println("Parm value: " + parm);
                 break;
-            case XLV_S:
-                break;
-            case XLV_G:
-                break;
-            case XPM_S:
-                break;
-            case XPM_G:
-                break;
-            case CNF_S:
-                break;
-            case CNF_G:
-                break;
             case DTM_S:
+                rig.send_dtmf(hamlib.HamlibConstants.RIG_VFO_CURR, args[0]);
                 break;
             case DTM_G:
-                break;
-            case TRN_S:
-                break;
-            case TRN_G:
-                break;
-            case CHN_S:
-                break;
-            case CHN_G:
-                break;
-            case RST_S:
+                String dtmf = new String();
+                rig.recv_dtmf(dtmf, hamlib.HamlibConstants.RIG_VFO_CURR);
+                if (rig.getError_status() == 0) System.out.println("Digits: " + dtmf);
                 break;
             case MRS_S:
+                rig.send_morse(hamlib.HamlibConstants.RIG_VFO_CURR, args[0]);
                 break;
             case BNK_S:
+                rig.set_bank(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+                break;
+            case MEM_S:
+                rig.set_mem(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
+                break;
+            case MEM_G:
+                int mem = rig.get_mem(hamlib.HamlibConstants.RIG_VFO_CURR);
+                if (rig.getError_status() == 0) System.out.println("Memory#: " + mem);
                 break;
             case VOP_S:
+                rig.vfo_op(hamlib.HamlibConstants.RIG_VFO_CURR, Hamlib.rig_parse_vfo_op(args[0]));
                 break;
             case SCN_S:
+                rig.scan(Hamlib.rig_parse_scan(args[0]), Integer.parseInt(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
                 break;
-            case DEV_G:
+            case TRN_S:
+                rig.set_trn(Integer.parseInt(args[0]));
+                break;
+            case TRN_G:
+                int trn = rig.get_trn();
+                if (rig.getError_status() == 0) System.out.println("Tranceive: " + trn);
                 break;
             default:
                 break;
