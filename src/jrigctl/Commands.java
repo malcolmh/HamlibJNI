@@ -1,11 +1,11 @@
 package jrigctl;
 
+import java.math.BigInteger;
 import java.util.EnumMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
 import hamlib.Hamlib;
-import hamlib.rptr_shift_t;
 
 public class Commands {
 
@@ -121,7 +121,7 @@ public class Commands {
                 rig.set_mode(Hamlib.rig_parse_mode(args[0]), Integer.parseInt(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
                 break;
             case MOD_G:
-                java.math.BigInteger[] mode = new java.math.BigInteger[1];
+                BigInteger[] mode = new BigInteger[1];
                 int[] bw = new int[1];
                 rig.get_mode(mode, bw, hamlib.HamlibConstants.RIG_VFO_CURR);
                 if (rig.getError_status() == 0) System.out.println("Mode: " + Hamlib.rig_strrmode(mode[0]) + "\nPassband: " + bw[0] + (bw[0] > 0 ? " Hz" : ""));
@@ -148,7 +148,7 @@ public class Commands {
                 rig.set_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR, Hamlib.rig_parse_rptr_shift(args[0]));
                 break;
             case RSH_G:
-                rptr_shift_t fsh = rig.get_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR);
+                hamlib.rptr_shift_t fsh = rig.get_rptr_shift(hamlib.HamlibConstants.RIG_VFO_CURR);
                 if (rig.getError_status() == 0) System.out.println("Rptr Shift: " + Hamlib.rig_strptrshift(fsh));
                 break;
             case ROF_S:
@@ -169,7 +169,7 @@ public class Commands {
                 rig.set_split_mode(Hamlib.rig_parse_mode(args[0]), Integer.parseInt(args[1]), hamlib.HamlibConstants.RIG_VFO_CURR);
                 break;
             case SPM_G:
-                mode = new java.math.BigInteger[1];
+                mode = new BigInteger[1];
                 bw = new int[1];
                 rig.get_split_mode(mode, bw, hamlib.HamlibConstants.RIG_VFO_CURR);
                 if (rig.getError_status() == 0) System.out.println("Mode: " + Hamlib.rig_strrmode(mode[0]) + "\nPassband: " + bw[0] + (bw[0] > 0 ? " Hz" : ""));
@@ -186,7 +186,7 @@ public class Commands {
                 hamlib.SWIGTYPE_p_split_t[] split = new hamlib.SWIGTYPE_p_split_t[1];
                 hamlib.SWIGTYPE_p_unsigned_int[] tx_vfo = new hamlib.SWIGTYPE_p_unsigned_int[1];
                 rig.get_split_vfo(split[0], tx_vfo[0], hamlib.HamlibConstants.RIG_VFO_CURR);
-                if (rig.getError_status() == 0) System.out.println("Split: " + split[0].toString() + "\nTx VFO: " + tx_vfo[0].toString());
+                if (rig.getError_status() == 0) System.out.println("Split: " + split[0] + "\nTx VFO: " + tx_vfo[0]);
                 break;
             case RIT_S:
                 rig.set_rit(hamlib.HamlibConstants.RIG_VFO_CURR, Integer.parseInt(args[0]));
